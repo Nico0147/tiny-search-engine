@@ -38,6 +38,7 @@ class Bing(SearchEngine):
             url = (self._base_url + next_page) 
         return {'url':url, 'data':None}
 
+
     def _get_url(self, tag, item='href'):
         '''Returns the URL of search results items.'''
         url = super(Bing, self)._get_url(tag, 'href')
@@ -45,13 +46,18 @@ class Bing(SearchEngine):
         try:
             parsed_url = urlparse(url)
             query_params = parse_qs(parsed_url.query)
-            encoded_url = query_params["u"][0][2:]
-            # fix base64 padding
-            encoded_url += (len(encoded_url) % 4) * "="
+            encoded_url = query_params.get("u", [None])[0]
+            
+            if encoded_url:
+                # fix base64 padding
+                encoded_url = encoded_url[2:]  # remove the "u=" part
+                encoded_url += (len(encoded_url) % 4) * "="
 
-            decoded_bytes = base64.b64decode(encoded_url)
-            resp = decoded_bytes.decode('utf-8')
+                decoded_bytes = base64.b64decode(encoded_url)
+                resp = decoded_bytes.decode('utf-8')
+            else:
+                # If there's no "u" parameter, return the URL directly
+                resp = url
         except Exception as e:
             print(f"Error decoding Base64 string: {e}")
-
         return resp
