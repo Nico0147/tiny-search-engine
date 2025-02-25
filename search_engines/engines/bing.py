@@ -41,7 +41,8 @@ class Bing(SearchEngine):
     def _get_url(self, tag, item='href'):
         '''Returns the URL of search results items.'''
         url = super(Bing, self)._get_url(tag, 'href')
-
+        resp = ""
+        print(url)
         try:
             parsed_url = urlparse(url)
             query_params = parse_qs(parsed_url.query)
