@@ -5,6 +5,7 @@ import json
 import os
 import threading
 import webbrowser
+import sys
 
 try:
     from search_engines import config
@@ -15,9 +16,13 @@ except ImportError as e:
 
 class ModernSearchGUI:
     def __init__(self, root):
-        # 修改全屏属性为最大化窗口
-        root.state('zoomed')  # 替代原来的全屏模式
-        root.attributes('-toolwindow', 0)  # 显示标准窗口按钮
+        if sys.platform == "linux":
+            root.state('normal')
+            root.attributes('-zoomed', 0)
+        else:
+            # 修改全屏属性为最大化窗口
+            root.state('zoomed')  # 替代原来的全屏模式
+            root.attributes('-toolwindow', 0)  # 显示标准窗口按钮
 
         self.root = root
         self.root.title("Tiny Search")
